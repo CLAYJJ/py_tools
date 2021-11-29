@@ -1,16 +1,24 @@
 import openpyxl
 import pymysql
 import re
+import argparse
 
 
 dest_path = "test.xlsx"
 
 wb = openpyxl.Workbook()
+parser = argparse.ArgumentParser()
+parser.add_argument('--host', dest='host', default='localhost')
+parser.add_argument('--username', dest='username', default='root')
+parser.add_argument('--password', dest='password')
+parser.add_argument('--database', dest='database')
+args = parser.parse_args()
 
-connection = pymysql.connect(host='172.31.47.159', 
-                user='icity_dev', 
-                password='icity_dev', 
-                db='omp_dev', 
+
+connection = pymysql.connect(host=args.host, 
+                user=args.username, 
+                password=args.password, 
+                db=args.database, 
                 charset='utf8mb4', 
                 cursorclass=pymysql.cursors.DictCursor)
 
@@ -18,9 +26,6 @@ connection = pymysql.connect(host='172.31.47.159',
 head = ["序号", "属性名称",	"属性编码",	"属性描述",	"数据类型",	"字段长度",	"字段格式",	"主键标识",	"非空标识",	"对应主数据",	"系统来源",	"校验规则"]
 
 def write_head(ws):
-    #for col in range(len(head)):
-    #    ws.cell(row=1, column=col+1, value=head[col])
-
     for i, value in enumerate(head):
         ws.cell(row=1, column=i+1, value=value)
 
@@ -57,7 +62,7 @@ try:
         result = cursor.fetchall()
         index = 0
         for table in result:
-            table_name = table['Tables_in_omp_dev']
+            table_name = table[f'Tables_in_{args.database}']
             if index == 0:
                 ws = wb.active
                 ws.title = table_name

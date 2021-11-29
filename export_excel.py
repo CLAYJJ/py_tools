@@ -4,7 +4,6 @@ import re
 import argparse
 
 
-dest_path = "test.xlsx"
 
 wb = openpyxl.Workbook()
 parser = argparse.ArgumentParser()
@@ -12,6 +11,7 @@ parser.add_argument('--host', dest='host', default='localhost')
 parser.add_argument('--username', dest='username', default='root')
 parser.add_argument('--password', dest='password')
 parser.add_argument('--database', dest='database')
+parser.add_argument('--dest', dest='dest', default='result.xlsx')
 args = parser.parse_args()
 
 
@@ -74,7 +74,7 @@ try:
 finally:
     connection.close()
 
-wb.save(dest_path)
+wb.save(args.dest)
 
 
 
